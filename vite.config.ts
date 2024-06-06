@@ -11,8 +11,13 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        pages_about: resolve(__dirname, 'pages/about.html'),
+        // pages_about: resolve(__dirname, 'pages/*.html'),
       },
+      output: {
+        entryFileNames: `assets/[name].js`,
+        chunkFileNames: `assets/[name].js`,
+        assetFileNames: `assets/[name].[ext]`
+      }
     },
   },
   plugins: [
