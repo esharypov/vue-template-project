@@ -1,4 +1,6 @@
 import { fileURLToPath, URL } from 'node:url'
+import { PreRenderedAsset } from 'rollup'
+import path from 'node:path'
 
 import { resolve } from 'path'
 import { defineConfig } from 'vite'
@@ -10,19 +12,44 @@ export default defineConfig({
   build: {
     rollupOptions: {
       input: {
-        main: resolve(__dirname, 'index.html'),
+        main: resolve(__dirname, 'index.html')
         // pages_about: resolve(__dirname, 'pages/*.html'),
       },
       output: {
-        entryFileNames: `assets/[name].js`,
-        chunkFileNames: `assets/[name].js`,
-        assetFileNames: `assets/[name].[ext]`
+        entryFileNames: `assets/js/[name].js`,
+        chunkFileNames: `assets/js/[name].js`,
+        assetFileNames: (info: PreRenderedAsset) => {
+          const name = info.name as string
+          const ext = path.extname(name)
+
+          switch (ext) {
+            case '.css':
+              return `assets/css/${name}`
+
+            case '.woff':
+            case '.woff2':
+              return `assets/fonts/${name}`
+
+            case '.jpg':
+            case '.png':
+            case '.gif':
+            case '.svg':
+            case '.webp':
+              return `assets/img/${name}`
+
+            case '.js':
+              return `assets/js/${name}`
+
+            default:
+              return `assets/${name}`
+          }
+        }
       }
-    },
+    }
   },
   plugins: [
     vue(),
-    VueDevTools(),
+    VueDevTools()
   ],
   resolve: {
     alias: {
